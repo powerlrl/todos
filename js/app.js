@@ -1,9 +1,10 @@
 ;(function (window) {
 	
-	new Vue({
+const app =	new Vue({
 		data: {
 			lists: JSON.parse(window.localStorage.getItem('lists')||'[]'),
-			currenting: 'null'
+			currenting: 'null',
+			filterText: ''
 		},
 		methods:{
 			handleSubmit(e){
@@ -62,7 +63,6 @@
 				},
 			},
 			toggleAllStat:{
-				// return this.lists.every(t => t.completed)
 				get(){
 					return this.lists.every(t => t.completed)
 				},
@@ -73,16 +73,41 @@
 					})
 				}
 			},
+			filterLists(){
+				switch(this.filterText){
+					case 'completed' :
+						return this.lists.filter(t => !t.completed)
+						break
+					case 'active' :
+						return this.lists.filter(t => t.completed)
+						break
+					default:
+						return this.lists
+				}
+			}
 		},
 		watch: {
 			lists: {
 				//深度监视，主要是数据对象的子元素发生了改变
 				handler(){
-					console.log(this.lists)
 					window.localStorage.setItem('lists',JSON.stringify(this.lists))
 				},
 				deep: true
 			}
+		},
+		directives: {
+			focus: {
+				inserted(el){
+					el.focus()
+				}
+			}
 		}
 	}).$mount('#app')
+
+
+//利用hash值来判断显示状态
+window.onhashchange = function(){
+	let hash = window.location.hash.substr(2)
+	app.filterText = hash
+}
 })(window);
