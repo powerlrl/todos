@@ -73,9 +73,6 @@
 					})
 				}
 			},
-			filterList(){
-				case: 'Acive'
-			}
 		},
 		watch: {
 			lists: {
